@@ -1,0 +1,534 @@
+{
+  "document": {
+    "title": "Modernizing CDS Waste Destruction",
+    "subtitle": "From Paper Logs to Digital Precision — Phase 1 Proposal",
+    "tagline": "One entry. One label. One source of truth.",
+    "version": "1.0",
+    "date": "2026-04-03",
+    "author": "IT Director",
+    "department": "Information Technology",
+    "classification": "Internal — Stakeholder Review",
+    "status": "Proposed"
+  },
+
+  "sections": [
+    {
+      "id": "01",
+      "title": "The Problem We Are Solving",
+      "summary": "The same 12 data fields are entered three times, by three different people, on three different forms.",
+      "touch_points": [
+        {
+          "number": 1,
+          "name": "Handwritten GMP Bag Label",
+          "location": "Collection bench",
+          "actor": "Operator",
+          "description": "Operator writes drug name, batch, quantity, strength, and form by hand at the collection bench.",
+          "risks": [
+            "No timestamp recorded",
+            "No operator identity captured",
+            "Legibility risk on handwritten text"
+          ]
+        },
+        {
+          "number": 2,
+          "name": "Paper Form 0010 at Drum",
+          "location": "Vault drum area",
+          "actor": "Operator",
+          "description": "Same data manually re-copied from the GMP label onto Form 0010 at the vault drum by hand.",
+          "risks": [
+            "Human transcription errors introduced",
+            "No system validation on entry",
+            "Paper can be lost, damaged, or misfiled"
+          ]
+        },
+        {
+          "number": 3,
+          "name": "Manual Spreadsheet Entry",
+          "location": "Office / desk",
+          "actor": "DEA Compliance or other staff",
+          "description": "Same data typed into a spreadsheet by a different person, at a later time, from the paper forms.",
+          "risks": [
+            "Entry is not contemporaneous — ALCOA+ violation risk",
+            "No direct link between entry and the physical drum",
+            "Discrepancies require rework before drum pickup"
+          ]
+        }
+      ],
+      "callout": "This is not a people problem. It is a process problem. And it has a straightforward fix."
+    },
+
+    {
+      "id": "02",
+      "title": "Current State: How It Works Today",
+      "what_is_happening": [
+        "3 manual data entry steps across different roles and times",
+        "Paper Form 0010 physically attached to or stored in the drum",
+        "Spreadsheet updated retrospectively, not at point of collection",
+        "No automated timestamp or operator identity on any record"
+      ],
+      "what_it_costs_us": [
+        "Operator time writing the same data repeatedly",
+        "DEA Compliance time reconciling typed vs. handwritten records",
+        "Discrepancies that delay drum sealing and pickup scheduling",
+        "Potential ALCOA+ findings during regulatory inspection"
+      ]
+    },
+
+    {
+      "id": "03",
+      "title": "Compliance Risk — ALCOA+",
+      "description": "An FDA inspector or DEA auditor reviewing ALCOA+ compliance would identify multiple gaps in the current process. Phase 1 closes all of them.",
+      "alcoa_assessment": [
+        {
+          "principle": "Attributable",
+          "question": "Who created the record?",
+          "current_state": "Initials on a paper form. No system-level identity capture.",
+          "risk_level": "MEDIUM"
+        },
+        {
+          "principle": "Contemporaneous",
+          "question": "Was it recorded at the time?",
+          "current_state": "Spreadsheet entry happens hours or days after the event.",
+          "risk_level": "HIGH"
+        },
+        {
+          "principle": "Original",
+          "question": "Is this the first record?",
+          "current_state": "The spreadsheet is a copy of a copy of a handwritten note.",
+          "risk_level": "HIGH"
+        },
+        {
+          "principle": "Accurate",
+          "question": "Is the data correct?",
+          "current_state": "Transcription from handwriting to Form 0010 to spreadsheet introduces error at each step.",
+          "risk_level": "HIGH"
+        },
+        {
+          "principle": "Enduring",
+          "question": "Will it last?",
+          "current_state": "Paper stored in vault. Subject to physical damage or loss.",
+          "risk_level": "MEDIUM"
+        }
+      ]
+    },
+
+    {
+      "id": "04",
+      "title": "Proposed Solution — Enter Once. Print. Done.",
+      "summary": "Phase 1 replaces the handwritten GMP label and the paper Form 0010 with a single digital entry at the point of collection.",
+      "workflow_steps": [
+        {
+          "step": 1,
+          "action": "Operator opens a pre-configured form on a Surface Pro 10 tablet at the collection station",
+          "how": "Microsoft Forms — accessible via Edge browser, pinned as the default screen. No login steps during the shift.",
+          "tool": "Microsoft Forms"
+        },
+        {
+          "step": 2,
+          "action": "Operator selects dropdowns for substance, schedule, drum, area, dosage form. Types only batch number and quantity.",
+          "how": "Dropdown lists controlled by DEA Compliance and Supervisors — no free-text errors possible on critical fields.",
+          "tool": "Controlled Dropdown Lists"
+        },
+        {
+          "step": 3,
+          "action": "Operator name and exact timestamp are captured automatically. No typing required.",
+          "how": "Microsoft 365 identity — the logged-in Windows account provides name and email. Tamper-proof.",
+          "tool": "Microsoft 365 Identity"
+        },
+        {
+          "step": 4,
+          "action": "Operator clicks Submit. Data instantly appears in the SharePoint workbook.",
+          "how": "DEA Compliance can see every entry in real time from their desk — no waiting for paper forms to be collected.",
+          "tool": "SharePoint + Power Automate"
+        },
+        {
+          "step": 5,
+          "action": "Label prints automatically at the Honeywell PM43 printer beside the collection station. Operator applies it to the bag.",
+          "how": "BarTender Enterprise generates a label with human-readable fields, a Code 128 barcode of the drum number, and a QR code linking to the full digital record.",
+          "tool": "BarTender Enterprise + Honeywell PM43"
+        }
+      ]
+    },
+
+    {
+      "id": "05",
+      "title": "Before and After Comparison",
+      "comparison": [
+        {
+          "category": "Bag labeling",
+          "before": "Handwrite GMP bag label by hand",
+          "after": "Label auto-printed by Honeywell PM43 on form submission"
+        },
+        {
+          "category": "Bag transport",
+          "before": "Carry bag to vault, search for Form 0010 on drum",
+          "after": "Bag is fully labeled before it leaves the collection room"
+        },
+        {
+          "category": "Form 0010 entry",
+          "before": "Re-copy 12 fields onto Form 0010 by hand",
+          "after": "ELIMINATED — data is already in SharePoint"
+        },
+        {
+          "category": "Form management",
+          "before": "Start a new paper form when Form 0010 fills up",
+          "after": "ELIMINATED — spreadsheet has unlimited rows"
+        },
+        {
+          "category": "Spreadsheet entry",
+          "before": "Collect forms, re-key into spreadsheet (3rd touch)",
+          "after": "ELIMINATED — SharePoint workbook is the live record from entry"
+        },
+        {
+          "category": "Reconciliation",
+          "before": "DEA Compliance reconciles typed vs. handwritten discrepancies",
+          "after": "DEA Compliance views live data at any time — no reconciliation needed"
+        },
+        {
+          "category": "Identity and timestamp",
+          "before": "No operator ID or timestamp on any record",
+          "after": "M365 identity and exact timestamp on every single entry — automatic"
+        },
+        {
+          "category": "Drum documentation",
+          "before": "Paper Form 0010 physically travels with drum",
+          "after": "DEA Compliance prints a formatted drum summary report from SharePoint at drum pickup — on demand"
+        }
+      ]
+    },
+
+    {
+      "id": "06",
+      "title": "Technology Stack",
+      "summary": "7 out of 9 technology components are already in place and fully paid for. The only new hardware required is 2 Microsoft Surface Pro 10 tablets and their accessories.",
+      "components": [
+        {
+          "component": "Label Printer",
+          "tool": "Honeywell PM43",
+          "status": "Already on site",
+          "available": true,
+          "cost": "$0"
+        },
+        {
+          "component": "Label Design Software",
+          "tool": "BarTender Enterprise",
+          "status": "Already licensed",
+          "available": true,
+          "cost": "$0"
+        },
+        {
+          "component": "Data Entry Form",
+          "tool": "Microsoft Forms",
+          "status": "Included in M365",
+          "available": true,
+          "cost": "$0"
+        },
+        {
+          "component": "Data Storage",
+          "tool": "Excel on SharePoint",
+          "status": "Included in M365",
+          "available": true,
+          "cost": "$0"
+        },
+        {
+          "component": "Print Automation",
+          "tool": "Microsoft Power Automate",
+          "status": "Included in M365",
+          "available": true,
+          "cost": "$0"
+        },
+        {
+          "component": "Device Management (MDM)",
+          "tool": "Microsoft Intune",
+          "status": "Included in M365",
+          "available": true,
+          "cost": "$0"
+        },
+        {
+          "component": "Wi-Fi Network",
+          "tool": "Aruba Access Points",
+          "status": "Already deployed site-wide",
+          "available": true,
+          "cost": "$0"
+        },
+        {
+          "component": "Tablet / Entry Device",
+          "tool": "Microsoft Surface Pro 10 for Business",
+          "status": "To be procured — 2 units",
+          "available": false,
+          "cost": "$3,200 – $3,800"
+        },
+        {
+          "component": "Surface Keyboard + Mount",
+          "tool": "Surface Flex Keyboard + Desk Mount",
+          "status": "To be procured",
+          "available": false,
+          "cost": "$520 – $740"
+        }
+      ]
+    },
+
+    {
+      "id": "07",
+      "title": "Timeline and Investment",
+      "duration": "8 weeks to go-live",
+      "phases": [
+        {
+          "phase": 1,
+          "weeks": "1–2",
+          "name": "Prepare",
+          "tasks": [
+            "Site connectivity check",
+            "Dropdown list preparation",
+            "Surface Pro procurement"
+          ]
+        },
+        {
+          "phase": 2,
+          "weeks": "2–4",
+          "name": "Build",
+          "tasks": [
+            "Microsoft Forms built",
+            "SharePoint workbook configured",
+            "BarTender label template designed",
+            "PM43 redeployed and connected"
+          ]
+        },
+        {
+          "phase": 3,
+          "weeks": "5–6",
+          "name": "Validate",
+          "tasks": [
+            "User Acceptance Testing",
+            "2-week parallel run",
+            "Cross-check digital vs. paper"
+          ]
+        },
+        {
+          "phase": 4,
+          "weeks": "7–8",
+          "name": "Launch",
+          "tasks": [
+            "Operator training (30 min per team)",
+            "Go-live — paper forms retired",
+            "IT monitoring post-launch"
+          ]
+        }
+      ],
+      "investment": {
+        "new_spend": {
+          "one_time": {
+            "items": [
+              { "item": "2x Microsoft Surface Pro 10", "cost": "$3,200 – $3,800" },
+              { "item": "2x Surface Keyboards + Desk Mounts", "cost": "$520 – $740" }
+            ],
+            "total": "$3,720 – $4,540"
+          },
+          "recurring_annual": {
+            "items": [
+              { "item": "Label Media + Ribbons", "cost": "$460 – $800 per year" }
+            ]
+          }
+        },
+        "leveraged_assets": {
+          "items": [
+            "Honeywell PM43 Printers (on site)",
+            "BarTender Enterprise License",
+            "Microsoft 365 Suite (Forms, SharePoint, Power Automate, Intune)",
+            "Aruba Wi-Fi Infrastructure"
+          ],
+          "additional_cost": "$0"
+        }
+      }
+    },
+
+    {
+      "id": "08",
+      "title": "Data Fields Captured",
+      "description": "The following 12 fields are captured at the point of collection via the digital form.",
+      "fields": [
+        {
+          "field": "Operator Name",
+          "input_type": "auto-captured",
+          "source": "M365 logged-in identity",
+          "validation": "System-level, tamper-proof"
+        },
+        {
+          "field": "Timestamp",
+          "input_type": "auto-captured",
+          "source": "System clock at time of submission",
+          "validation": "System-level, tamper-proof"
+        },
+        {
+          "field": "Drug Name",
+          "input_type": "dropdown",
+          "source": "Controlled list managed by DEA Compliance",
+          "validation": "Restricted to approved substances"
+        },
+        {
+          "field": "DEA Schedule",
+          "input_type": "dropdown",
+          "source": "Schedule II, III, IV, V",
+          "validation": "Restricted to valid schedule classes"
+        },
+        {
+          "field": "Dosage Form",
+          "input_type": "dropdown",
+          "source": "Tablet, Capsule, Liquid, Injectable, Patch, Powder",
+          "validation": "Restricted to approved forms"
+        },
+        {
+          "field": "Strength",
+          "input_type": "dropdown",
+          "source": "Controlled list of approved strengths",
+          "validation": "Restricted to valid strengths"
+        },
+        {
+          "field": "Batch / Lot Number",
+          "input_type": "manual_text",
+          "source": "Operator types from product label",
+          "validation": "Required field, format validation"
+        },
+        {
+          "field": "Quantity for Destruction",
+          "input_type": "manual_number",
+          "source": "Operator counts and enters",
+          "validation": "Required field, numeric only, minimum 1"
+        },
+        {
+          "field": "Collection Area",
+          "input_type": "dropdown",
+          "source": "SDF, Packaging Lines 1-3, QC Lab, Vault",
+          "validation": "Restricted to approved areas"
+        },
+        {
+          "field": "Drum Number",
+          "input_type": "dropdown",
+          "source": "Active drum list maintained by DEA Compliance",
+          "validation": "Restricted to active drums"
+        },
+        {
+          "field": "Reason for Destruction",
+          "input_type": "dropdown",
+          "source": "Expired, Rejected, Production Waste, Damaged, Recalled, Stability Failure",
+          "validation": "Restricted to approved reasons"
+        },
+        {
+          "field": "Label Barcode / QR",
+          "input_type": "auto-generated",
+          "source": "Code 128 barcode of drum number + QR code linking to digital record",
+          "validation": "System-generated on label print"
+        }
+      ]
+    },
+
+    {
+      "id": "09",
+      "title": "Open Items for Discussion",
+      "items": [
+        {
+          "number": 1,
+          "topic": "Operator Identity Method",
+          "description": "How do we attribute entries? Options: M365 login per shift, operator dropdown, badge scan/PIN. Needs input from DEA Compliance and QA.",
+          "owner": "IT + DEA Compliance",
+          "timing": "Week 1",
+          "options": [
+            "M365 login per shift — operator logs into tablet at shift start",
+            "Operator dropdown — self-selected from a list on the form",
+            "Badge scan / PIN — RFID reader or PIN entry before each submission"
+          ]
+        },
+        {
+          "number": 2,
+          "topic": "Offline Fallback",
+          "description": "What happens if Wi-Fi is down at a collection station? Need a contingency SOP defining the fallback process.",
+          "owner": "IT + Operations",
+          "timing": "Week 2",
+          "options": [
+            "Revert to paper SOP for affected shift, back-enter into system",
+            "Surface Pro cached form with sync on reconnect"
+          ]
+        },
+        {
+          "number": 3,
+          "topic": "Change Control",
+          "description": "SOP update and validation protocol need to be initiated. Paper Form 0010 cannot be retired without a change control record.",
+          "owner": "QA",
+          "timing": "Week 1"
+        },
+        {
+          "number": 4,
+          "topic": "Data Retention",
+          "description": "DEA-mandated retention period for controlled substance destruction records (typically 2 years minimum). SharePoint retention policy must align.",
+          "owner": "IT + DEA Compliance",
+          "timing": "Week 2"
+        },
+        {
+          "number": 5,
+          "topic": "21 CFR Part 11 Classification",
+          "description": "Is this record classified as GxP? If yes, validation burden increases significantly (IQ/OQ/PQ, audit trail, electronic signatures). Clarify classification early.",
+          "owner": "QA",
+          "timing": "Week 1"
+        }
+      ]
+    },
+
+    {
+      "id": "10",
+      "title": "What We Are Asking For",
+      "summary": "Three manual data entry steps eliminated. Eight weeks. Under $5,000.",
+      "action_items": [
+        {
+          "action": "Team sign-off to proceed with Phase 1",
+          "owner": "All stakeholders",
+          "due": "Today"
+        },
+        {
+          "action": "Controlled substance dropdown list (drug names, strengths, schedule classes)",
+          "owner": "DEA Compliance",
+          "due": "Week 1"
+        },
+        {
+          "action": "Confirmation of active drum numbers for SDF and Packaging",
+          "owner": "DEA Compliance",
+          "due": "Week 1"
+        },
+        {
+          "action": "Authorization to redeploy Honeywell PM43 units to collection areas",
+          "owner": "Operations / Facilities",
+          "due": "Week 3–4"
+        },
+        {
+          "action": "Budget approval for 2x Surface Pro 10 (~$3,720 – $4,540 total)",
+          "owner": "Site Leadership",
+          "due": "Week 1"
+        },
+        {
+          "action": "2–3 operators from SDF and Packaging for UAT and parallel run",
+          "owner": "Manufacturing / Operations",
+          "due": "Week 5"
+        }
+      ],
+      "scope_note": "Phase 1 does not change anything about the DEA Compliance downstream process, drum sealing, or DEA 41 submission. It only changes what happens at the point of collection — using tools we already own."
+    }
+  ],
+
+  "prototype": {
+    "description": "A working interactive prototype has been built demonstrating the Phase 1 system.",
+    "views": [
+      {
+        "name": "Collection Entry Form",
+        "description": "Tablet-optimized form with dropdown fields for all controlled data, auto-captured operator ID and timestamp, and a submit button that triggers automatic label printing."
+      },
+      {
+        "name": "Live Dashboard",
+        "description": "Real-time SharePoint view for DEA Compliance showing all entries, active drums, operator activity, and zero-reconciliation status."
+      },
+      {
+        "name": "Auto-Generated Label",
+        "description": "Printed label with all 12 data fields, Code 128 barcode for drum number, and QR code linking to the full digital record."
+      }
+    ],
+    "file": "index.html"
+  }
+}
