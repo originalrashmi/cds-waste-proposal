@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CDS Waste Destruction — Phase 1 Prototype</title>
+    <style>
+        :root {
+            --primary: #1a5276;
+            --primary-light: #2980b9;
+            --accent: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --bg: #f4f6f8;
+            --card: #ffffff;
+            --text: #2c3e50;
+            --text-light: #7f8c8d;
+            --border: #dce1e6;
+            --shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ── Navigation ── */
+        .nav {
+            background: var(--primary);
+            color: white;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            height: 56px;
+            gap: 32px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-brand {
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .nav-brand svg { width: 22px; height: 22px; }
+        .nav-tabs { display: flex; gap: 4px; height: 100%; }
+        .nav-tab {
+            padding: 0 20px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(255,255,255,0.7);
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .nav-tab:hover { color: white; background: rgba(255,255,255,0.08); }
+        .nav-tab.active {
+            color: white;
+            border-bottom-color: var(--accent);
+            background: rgba(255,255,255,0.05);
+        }
+        .nav-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 13px;
+            color: rgba(255,255,255,0.8);
+        }
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .nav-avatar {
+            width: 32px; height: 32px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            color: white;
+        }
+
+        /* ── Views ── */
+        .view { display: none; padding: 24px; max-width: 1200px; margin: 0 auto; }
+        .view.active { display: block; }
+
+        /* ── Form View ── */
+        .form-header {
+            margin-bottom: 24px;
+        }
+        .form-header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .form-header p {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        .form-card {
+            background: var(--card);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            padding: 28px 32px;
+            border: 1px solid var(--border);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        .form-group label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-light);
+            margin-bottom: 6px;
+        }
+        .form-group label .required {
+            color: var(--danger);
+            margin-left: 2px;
+        }
+        .form-group select,
+        .form-group input {
+            padding: 10px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            color: var(--text);
+            background: white;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            appearance: auto;
+        }
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(41,128,185,0.12);
+        }
+        .auto-field {
+            padding: 10px 14px;
+            background: #eef6ec;
+            border: 1.5px dashed #82c785;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #27753a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .auto-field svg { width: 16px; height: 16px; flex-shrink: 0; }
+        .auto-badge {
+            font-size: 10px;
+            background: #27ae60;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: auto;
+        }
+
+        .form-actions {
+            margin-top: 24px;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+        }
+
+        .btn {
+            padding: 10px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        .btn-primary:hover { background: var(--primary-light); }
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-light);
+            border: 1.5px solid var(--border);
+        }
+        .btn-secondary:hover { background: var(--bg); }
+        .btn-success {
+            background: var(--accent);
+            color: white;
+        }
+        .btn-success:hover { background: #219a52; }
+
+        /* ── Label Preview ── */
+        .label-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+        .label-overlay.show { display: flex; }
+
+        .label-modal {
+            background: white;
+            border-radius: 12px;
+            padding: 28px;
+            width: 580px;
+            max-width: 95vw;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+        .label-modal h2 {
+            font-size: 18px;
+            margin-bottom: 4px;
+            color: var(--primary);
+        }
+        .label-modal .subtitle {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+
+        .label-preview {
+            border: 2px solid #333;
+            border-radius: 4px;
+            padding: 16px 20px;
+            background: #fffef5;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            position: relative;
+        }
+        .label-preview .label-header {
+            text-align: center;
+            font-weight: 700;
+            font-size: 14px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        .label-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 3px 0;
+            border-bottom: 1px dotted #ccc;
+        }
+        .label-row .lbl { font-weight: 700; color: #555; }
+        .label-row .val { text-align: right; }
+        .label-codes {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 2px solid #333;
+        }
+        .barcode-sim {
+            display: flex;
+            gap: 1px;
+            align-items: flex-end;
+            height: 36px;
+        }
+        .barcode-sim .bar {
+            background: #333;
+            width: 2px;
+        }
+        .qr-sim {
+            width: 50px;
+            height: 50px;
+            display: grid;
+            grid-template-columns: repeat(7,1fr);
+            grid-template-rows: repeat(7,1fr);
+            gap: 1px;
+        }
+        .qr-sim .qr-cell {
+            background: #333;
+            border-radius: 1px;
+        }
+        .qr-sim .qr-cell.white { background: white; }
+
+        .label-modal-actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        /* ── Success Banner ── */
+        .success-banner {
+            display: none;
+            background: #d4edda;
+            border: 1px solid #a3d9a5;
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            color: #155724;
+            font-size: 14px;
+            align-items: center;
+            gap: 10px;
+        }
+        .success-banner.show { display: flex; }
+        .success-banner svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+        /* ── Dashboard View ── */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 20px;
+        }
+        .dashboard-header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            background: var(--card);
+            border-radius: 10px;
+            padding: 18px 20px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+        .stat-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-light);
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .stat-sub {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 2px;
+        }
+
+        .table-card {
+            background: var(--card);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        .table-card-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .table-card-header h3 {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        thead th {
+            text-align: left;
+            padding: 10px 16px;
+            background: #f8f9fa;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-light);
+            border-bottom: 1px solid var(--border);
+        }
+        tbody td {
+            padding: 10px 16px;
+            border-bottom: 1px solid #f0f2f4;
+        }
+        tbody tr:hover { background: #f8fafc; }
+        .schedule-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .schedule-ii { background: #fde8e8; color: #c0392b; }
+        .schedule-iii { background: #fef3e2; color: #e67e22; }
+        .schedule-iv { background: #e8f4fd; color: #2980b9; }
+        .schedule-v { background: #e8f8f0; color: #27ae60; }
+
+        .drum-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            background: #eef0f2;
+            color: var(--text);
+        }
+
+        /* ── Label View ── */
+        .label-view-card {
+            background: var(--card);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            padding: 28px 32px;
+            max-width: 620px;
+            margin: 0 auto;
+        }
+
+        /* ── Process View ── */
+        .process-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            max-width: 700px;
+            margin: 24px auto;
+        }
+        .process-step {
+            display: flex;
+            gap: 20px;
+            position: relative;
+        }
+        .step-indicator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .step-dot {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 15px;
+            z-index: 1;
+        }
+        .step-line {
+            width: 3px;
+            flex: 1;
+            background: #d0d7de;
+            min-height: 20px;
+        }
+        .process-step:last-child .step-line { display: none; }
+        .step-content {
+            padding-bottom: 28px;
+        }
+        .step-content h3 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .step-content p {
+            font-size: 13px;
+            color: var(--text-light);
+            line-height: 1.5;
+        }
+        .step-tool {
+            display: inline-block;
+            margin-top: 6px;
+            padding: 3px 10px;
+            background: #eef0f2;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .eliminated-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #fde8e8;
+            color: #c0392b;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-top: 6px;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .stats-row { grid-template-columns: 1fr 1fr; }
+            .nav-tabs { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── Navigation ── -->
+<nav class="nav">
+    <div class="nav-brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        CDS Waste Tracker
+    </div>
+    <div class="nav-tabs">
+        <div class="nav-tab active" data-view="form">Collection Entry</div>
+        <div class="nav-tab" data-view="dashboard">Live Dashboard</div>
+        <div class="nav-tab" data-view="process">Process Map</div>
+    </div>
+    <div class="nav-right">
+        <div class="nav-user">
+            <div class="nav-avatar">JD</div>
+            <span>Jane Doe, Operator</span>
+        </div>
+    </div>
+</nav>
+
+<!-- ═══════════ FORM VIEW ═══════════ -->
+<div class="view active" id="view-form">
+    <div class="success-banner" id="successBanner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <div>
+            <strong>Entry submitted successfully.</strong> Label sent to Honeywell PM43 printer at SDF Collection Station.
+        </div>
+    </div>
+
+    <div class="form-header">
+        <h1>CDS Collection Entry</h1>
+        <p>Enter substance details at point of collection. Operator identity and timestamp are captured automatically.</p>
+    </div>
+
+    <div class="form-card">
+        <div class="form-grid">
+            <!-- Auto fields -->
+            <div class="form-group">
+                <label>Operator <span class="auto-badge">AUTO</span></label>
+                <div class="auto-field">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    Jane Doe (jane.doe@pharma.com)
+                    <span class="auto-badge">AUTO</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Timestamp <span class="auto-badge">AUTO</span></label>
+                <div class="auto-field">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span id="liveTimestamp"></span>
+                    <span class="auto-badge">AUTO</span>
+                </div>
+            </div>
+
+            <!-- Dropdowns -->
+            <div class="form-group">
+                <label>Drug Name <span class="required">*</span></label>
+                <select id="drugName">
+                    <option value="">Select substance...</option>
+                    <option>Oxycodone HCl</option>
+                    <option>Hydrocodone Bitartrate</option>
+                    <option>Fentanyl Citrate</option>
+                    <option>Morphine Sulfate</option>
+                    <option>Codeine Phosphate</option>
+                    <option>Alprazolam</option>
+                    <option>Diazepam</option>
+                    <option>Methylphenidate HCl</option>
+                    <option>Amphetamine Salts</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>DEA Schedule <span class="required">*</span></label>
+                <select id="schedule">
+                    <option value="">Select schedule...</option>
+                    <option>Schedule II</option>
+                    <option>Schedule III</option>
+                    <option>Schedule IV</option>
+                    <option>Schedule V</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Dosage Form <span class="required">*</span></label>
+                <select id="dosageForm">
+                    <option value="">Select form...</option>
+                    <option>Tablet</option>
+                    <option>Capsule</option>
+                    <option>Liquid / Oral Solution</option>
+                    <option>Injectable</option>
+                    <option>Patch</option>
+                    <option>Powder / Bulk</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Strength <span class="required">*</span></label>
+                <select id="strength">
+                    <option value="">Select strength...</option>
+                    <option>5 mg</option>
+                    <option>10 mg</option>
+                    <option>15 mg</option>
+                    <option>20 mg</option>
+                    <option>25 mg</option>
+                    <option>30 mg</option>
+                    <option>40 mg</option>
+                    <option>50 mg</option>
+                    <option>80 mg</option>
+                    <option>100 mg</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Collection Area <span class="required">*</span></label>
+                <select id="area">
+                    <option value="">Select area...</option>
+                    <option>SDF — Solid Dosage Formulation</option>
+                    <option>Packaging — Line 1</option>
+                    <option>Packaging — Line 2</option>
+                    <option>Packaging — Line 3</option>
+                    <option>Quality Control Lab</option>
+                    <option>Vault</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Drum Number <span class="required">*</span></label>
+                <select id="drumNumber">
+                    <option value="">Select drum...</option>
+                    <option>DRUM-2026-001</option>
+                    <option>DRUM-2026-002</option>
+                    <option>DRUM-2026-003</option>
+                    <option>DRUM-2026-004</option>
+                </select>
+            </div>
+
+            <!-- Manual entry -->
+            <div class="form-group">
+                <label>Batch / Lot Number <span class="required">*</span></label>
+                <input type="text" id="batchNumber" placeholder="e.g. LOT-2026-04-0892">
+            </div>
+            <div class="form-group">
+                <label>Quantity for Destruction <span class="required">*</span></label>
+                <input type="number" id="quantity" placeholder="e.g. 250" min="1">
+            </div>
+
+            <div class="form-group full-width">
+                <label>Reason for Destruction</label>
+                <select id="reason">
+                    <option value="">Select reason...</option>
+                    <option>Expired Product</option>
+                    <option>Rejected — Quality Hold</option>
+                    <option>Production Waste</option>
+                    <option>Damaged Packaging</option>
+                    <option>Recalled Product</option>
+                    <option>Stability Failure</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button class="btn btn-secondary" onclick="resetForm()">Clear</button>
+            <button class="btn btn-primary" onclick="submitEntry()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                Submit &amp; Print Label
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════ LABEL PREVIEW MODAL ═══════════ -->
+<div class="label-overlay" id="labelOverlay">
+    <div class="label-modal">
+        <h2>Label Generated</h2>
+        <p class="subtitle">The following label has been sent to the Honeywell PM43 at the collection station.</p>
+
+        <div class="label-preview">
+            <div class="label-header">CONTROLLED SUBSTANCE — FOR DESTRUCTION</div>
+            <div class="label-row"><span class="lbl">Drug Name:</span><span class="val" id="lbl-drug"></span></div>
+            <div class="label-row"><span class="lbl">Schedule:</span><span class="val" id="lbl-schedule"></span></div>
+            <div class="label-row"><span class="lbl">Dosage Form:</span><span class="val" id="lbl-form"></span></div>
+            <div class="label-row"><span class="lbl">Strength:</span><span class="val" id="lbl-strength"></span></div>
+            <div class="label-row"><span class="lbl">Batch/Lot:</span><span class="val" id="lbl-batch"></span></div>
+            <div class="label-row"><span class="lbl">Quantity:</span><span class="val" id="lbl-qty"></span></div>
+            <div class="label-row"><span class="lbl">Collection Area:</span><span class="val" id="lbl-area"></span></div>
+            <div class="label-row"><span class="lbl">Drum:</span><span class="val" id="lbl-drum"></span></div>
+            <div class="label-row"><span class="lbl">Reason:</span><span class="val" id="lbl-reason"></span></div>
+            <div class="label-row"><span class="lbl">Operator:</span><span class="val">Jane Doe</span></div>
+            <div class="label-row"><span class="lbl">Date/Time:</span><span class="val" id="lbl-time"></span></div>
+            <div class="label-codes">
+                <div>
+                    <div class="barcode-sim" id="barcodeSim"></div>
+                    <div style="font-size:10px;text-align:center;margin-top:3px" id="lbl-barcode-text"></div>
+                </div>
+                <div style="text-align:center">
+                    <div class="qr-sim" id="qrSim"></div>
+                    <div style="font-size:9px;color:#888;margin-top:3px">Scan for full record</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="label-modal-actions">
+            <button class="btn btn-secondary" onclick="closeLabelModal()">Close</button>
+            <button class="btn btn-success" onclick="confirmPrint()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                Confirm — Label Printing
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════ DASHBOARD VIEW ═══════════ -->
+<div class="view" id="view-dashboard">
+    <div class="dashboard-header">
+        <div>
+            <h1>DEA Compliance — Live Dashboard</h1>
+            <p style="font-size:13px;color:var(--text-light);margin-top:4px;">Real-time view of all CDS destruction entries from SharePoint. No manual reconciliation required.</p>
+        </div>
+        <button class="btn btn-secondary" style="font-size:12px">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export Drum Report
+        </button>
+    </div>
+
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-label">Entries Today</div>
+            <div class="stat-value" id="statToday">7</div>
+            <div class="stat-sub">Across all areas</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Active Drums</div>
+            <div class="stat-value">3</div>
+            <div class="stat-sub">1 nearing capacity</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Operators Active</div>
+            <div class="stat-value">4</div>
+            <div class="stat-sub">SDF &amp; Packaging</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Discrepancies</div>
+            <div class="stat-value" style="color:var(--accent)">0</div>
+            <div class="stat-sub">No reconciliation needed</div>
+        </div>
+    </div>
+
+    <div class="table-card">
+        <div class="table-card-header">
+            <h3>Recent Entries — SharePoint Live Workbook</h3>
+            <span style="font-size:12px;color:var(--text-light)">Auto-refreshes every 30 seconds</span>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Operator</th>
+                    <th>Drug Name</th>
+                    <th>Schedule</th>
+                    <th>Batch</th>
+                    <th>Qty</th>
+                    <th>Drum</th>
+                    <th>Area</th>
+                </tr>
+            </thead>
+            <tbody id="dashboardTable">
+                <tr>
+                    <td>08:12 AM</td>
+                    <td>J. Doe</td>
+                    <td>Oxycodone HCl</td>
+                    <td><span class="schedule-badge schedule-ii">C-II</span></td>
+                    <td>LOT-2026-04-0871</td>
+                    <td>150</td>
+                    <td><span class="drum-badge">DRUM-2026-001</span></td>
+                    <td>SDF</td>
+                </tr>
+                <tr>
+                    <td>08:34 AM</td>
+                    <td>M. Smith</td>
+                    <td>Fentanyl Citrate</td>
+                    <td><span class="schedule-badge schedule-ii">C-II</span></td>
+                    <td>LOT-2026-04-0855</td>
+                    <td>40</td>
+                    <td><span class="drum-badge">DRUM-2026-001</span></td>
+                    <td>Packaging — Line 1</td>
+                </tr>
+                <tr>
+                    <td>09:05 AM</td>
+                    <td>R. Chen</td>
+                    <td>Alprazolam</td>
+                    <td><span class="schedule-badge schedule-iv">C-IV</span></td>
+                    <td>LOT-2026-04-0903</td>
+                    <td>500</td>
+                    <td><span class="drum-badge">DRUM-2026-002</span></td>
+                    <td>SDF</td>
+                </tr>
+                <tr>
+                    <td>09:22 AM</td>
+                    <td>J. Doe</td>
+                    <td>Morphine Sulfate</td>
+                    <td><span class="schedule-badge schedule-ii">C-II</span></td>
+                    <td>LOT-2026-04-0889</td>
+                    <td>200</td>
+                    <td><span class="drum-badge">DRUM-2026-001</span></td>
+                    <td>SDF</td>
+                </tr>
+                <tr>
+                    <td>10:15 AM</td>
+                    <td>A. Patel</td>
+                    <td>Codeine Phosphate</td>
+                    <td><span class="schedule-badge schedule-ii">C-II</span></td>
+                    <td>LOT-2026-03-0812</td>
+                    <td>75</td>
+                    <td><span class="drum-badge">DRUM-2026-003</span></td>
+                    <td>Quality Control Lab</td>
+                </tr>
+                <tr>
+                    <td>10:48 AM</td>
+                    <td>M. Smith</td>
+                    <td>Diazepam</td>
+                    <td><span class="schedule-badge schedule-iv">C-IV</span></td>
+                    <td>LOT-2026-04-0920</td>
+                    <td>300</td>
+                    <td><span class="drum-badge">DRUM-2026-002</span></td>
+                    <td>Packaging — Line 2</td>
+                </tr>
+                <tr>
+                    <td>11:10 AM</td>
+                    <td>R. Chen</td>
+                    <td>Hydrocodone Bitartrate</td>
+                    <td><span class="schedule-badge schedule-ii">C-II</span></td>
+                    <td>LOT-2026-04-0877</td>
+                    <td>125</td>
+                    <td><span class="drum-badge">DRUM-2026-001</span></td>
+                    <td>SDF</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ═══════════ PROCESS VIEW ═══════════ -->
+<div class="view" id="view-process">
+    <div class="form-header">
+        <h1>Phase 1 Process Flow</h1>
+        <p>How the new digital workflow replaces three manual steps with a single entry point.</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:32px;">
+        <!-- New Process -->
+        <div>
+            <h2 style="font-size:16px;color:var(--accent);margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                New Digital Process
+            </h2>
+            <div class="process-steps">
+                <div class="process-step">
+                    <div class="step-indicator"><div class="step-dot">1</div><div class="step-line"></div></div>
+                    <div class="step-content">
+                        <h3>Open Form on Tablet</h3>
+                        <p>Operator picks up Surface Pro at collection bench. Form is already open — no login needed during shift.</p>
+                        <span class="step-tool">Microsoft Forms via Edge</span>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div class="step-indicator"><div class="step-dot">2</div><div class="step-line"></div></div>
+                    <div class="step-content">
+                        <h3>Select Dropdowns + Enter Batch &amp; Qty</h3>
+                        <p>Drug, schedule, form, strength, drum, area via dropdowns. Only batch number and quantity are typed.</p>
+                        <span class="step-tool">Controlled dropdown lists</span>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div class="step-indicator"><div class="step-dot">3</div><div class="step-line"></div></div>
+                    <div class="step-content">
+                        <h3>Submit — Data Flows Automatically</h3>
+                        <p>Operator ID + timestamp captured by M365. Data written to SharePoint. Label sent to PM43 printer.</p>
+                        <span class="step-tool">Power Automate + BarTender</span>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div class="step-indicator"><div class="step-dot">4</div><div class="step-line"></div></div>
+                    <div class="step-content">
+                        <h3>Apply Printed Label to Bag</h3>
+                        <p>Label prints automatically with all fields, barcode, and QR code. No handwriting required.</p>
+                        <span class="step-tool">Honeywell PM43</span>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div class="step-indicator"><div class="step-dot" style="background:var(--accent)">5</div></div>
+                    <div class="step-content">
+                        <h3>Bag Goes to Drum — Done</h3>
+                        <p>DEA Compliance sees the entry in real time. No form to fill. No spreadsheet to update. No reconciliation.</p>
+                        <span class="step-tool">SharePoint Live View</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Old Process -->
+        <div>
+            <h2 style="font-size:16px;color:var(--danger);margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                Old Paper Process (Eliminated)
+            </h2>
+            <div class="process-steps">
+                <div class="process-step">
+                    <div class="step-indicator"><div class="step-dot" style="background:#bdc3c7">1</div><div class="step-line"></div></div>
+                    <div class="step-content">
+                        <h3 style="text-decoration:line-through;color:var(--text-light)">Handwrite GMP Bag Label</h3>
+                        <p>Operator writes 12 fields by hand. Legibility issues. No timestamp. No identity capture.</p>
+                        <span class="eliminated-badge">Eliminated</span>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div class="step-indicator"><div class="step-dot" style="background:#bdc3c7">2</div><div class="step-line"></div></div>
+                    <div class="step-content">
+                        <h3 style="text-decoration:line-through;color:var(--text-light)">Carry Bag to Vault + Find Form 0010</h3>
+                        <p>Operator locates the correct paper form physically attached to the drum in the vault.</p>
+                        <span class="eliminated-badge">Eliminated</span>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div class="step-indicator"><div class="step-dot" style="background:#bdc3c7">3</div><div class="step-line"></div></div>
+                    <div class="step-content">
+                        <h3 style="text-decoration:line-through;color:var(--text-light)">Re-copy All 12 Fields onto Form 0010</h3>
+                        <p>Same data transcribed again by hand. Transcription errors introduced. Second touch point.</p>
+                        <span class="eliminated-badge">Eliminated</span>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div class="step-indicator"><div class="step-dot" style="background:#bdc3c7">4</div><div class="step-line"></div></div>
+                    <div class="step-content">
+                        <h3 style="text-decoration:line-through;color:var(--text-light)">Collect Forms + Re-key into Spreadsheet</h3>
+                        <p>Different person, different time. Third entry of the same data. ALCOA+ violation — not contemporaneous.</p>
+                        <span class="eliminated-badge">Eliminated</span>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div class="step-indicator"><div class="step-dot" style="background:#bdc3c7">5</div></div>
+                    <div class="step-content">
+                        <h3 style="text-decoration:line-through;color:var(--text-light)">Reconcile Discrepancies</h3>
+                        <p>DEA Compliance compares handwritten labels vs. forms vs. spreadsheet. Rework delays drum pickup.</p>
+                        <span class="eliminated-badge">Eliminated</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ── Live Timestamp ──
+    function updateTimestamp() {
+        const now = new Date();
+        document.getElementById('liveTimestamp').textContent = now.toLocaleString('en-US', {
+            weekday: 'short', year: 'numeric', month: 'short', day: 'numeric',
+            hour: '2-digit', minute: '2-digit', second: '2-digit'
+        });
+    }
+    updateTimestamp();
+    setInterval(updateTimestamp, 1000);
+
+    // ── Tab Navigation ──
+    document.querySelectorAll('.nav-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            tab.classList.add('active');
+            document.getElementById('view-' + tab.dataset.view).classList.add('active');
+        });
+    });
+
+    // ── Form Submission ──
+    function submitEntry() {
+        const drug = document.getElementById('drugName').value;
+        const sched = document.getElementById('schedule').value;
+        const form = document.getElementById('dosageForm').value;
+        const str = document.getElementById('strength').value;
+        const area = document.getElementById('area').value;
+        const drum = document.getElementById('drumNumber').value;
+        const batch = document.getElementById('batchNumber').value;
+        const qty = document.getElementById('quantity').value;
+        const reason = document.getElementById('reason').value;
+
+        if (!drug || !sched || !form || !str || !area || !drum || !batch || !qty) {
+            alert('Please complete all required fields before submitting.');
+            return;
+        }
+
+        // Populate label
+        document.getElementById('lbl-drug').textContent = drug;
+        document.getElementById('lbl-schedule').textContent = sched;
+        document.getElementById('lbl-form').textContent = form;
+        document.getElementById('lbl-strength').textContent = str;
+        document.getElementById('lbl-batch').textContent = batch;
+        document.getElementById('lbl-qty').textContent = qty + ' units';
+        document.getElementById('lbl-area').textContent = area;
+        document.getElementById('lbl-drum').textContent = drum;
+        document.getElementById('lbl-reason').textContent = reason || '—';
+        document.getElementById('lbl-time').textContent = new Date().toLocaleString('en-US', {
+            year: 'numeric', month: 'short', day: 'numeric',
+            hour: '2-digit', minute: '2-digit', second: '2-digit'
+        });
+
+        // Generate barcode sim
+        generateBarcode(drum);
+        generateQR();
+
+        document.getElementById('lbl-barcode-text').textContent = drum;
+
+        // Show label modal
+        document.getElementById('labelOverlay').classList.add('show');
+    }
+
+    function generateBarcode(text) {
+        const container = document.getElementById('barcodeSim');
+        container.innerHTML = '';
+        const pattern = [];
+        for (let i = 0; i < text.length * 4; i++) {
+            pattern.push(Math.random() > 0.4);
+        }
+        pattern.forEach(thick => {
+            const bar = document.createElement('div');
+            bar.className = 'bar';
+            bar.style.width = thick ? '2px' : '1px';
+            bar.style.height = (20 + Math.random() * 16) + 'px';
+            container.appendChild(bar);
+        });
+    }
+
+    function generateQR() {
+        const container = document.getElementById('qrSim');
+        container.innerHTML = '';
+        const corners = [0,1,2,5,6,7,8,13,14,35,36,42,43,44,45,46,47,48];
+        for (let i = 0; i < 49; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'qr-cell';
+            if (!corners.includes(i) && Math.random() > 0.45) {
+                cell.classList.add('white');
+            }
+            container.appendChild(cell);
+        }
+    }
+
+    function closeLabelModal() {
+        document.getElementById('labelOverlay').classList.remove('show');
+    }
+
+    function confirmPrint() {
+        closeLabelModal();
+
+        // Add row to dashboard
+        const now = new Date();
+        const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        const drug = document.getElementById('drugName').value;
+        const sched = document.getElementById('schedule').value;
+        const batch = document.getElementById('batchNumber').value;
+        const qty = document.getElementById('quantity').value;
+        const drum = document.getElementById('drumNumber').value;
+        const area = document.getElementById('area').value.split('—')[0].trim();
+
+        const schedClass = sched.includes('II') ? 'schedule-ii' : sched.includes('III') ? 'schedule-iii' : sched.includes('IV') ? 'schedule-iv' : 'schedule-v';
+        const schedLabel = sched.replace('Schedule ', 'C-');
+
+        const row = document.createElement('tr');
+        row.style.background = '#f0fff4';
+        row.innerHTML = `
+            <td><strong>${time}</strong></td>
+            <td>J. Doe</td>
+            <td>${drug}</td>
+            <td><span class="schedule-badge ${schedClass}">${schedLabel}</span></td>
+            <td>${batch}</td>
+            <td>${qty}</td>
+            <td><span class="drum-badge">${drum}</span></td>
+            <td>${area}</td>
+        `;
+
+        const tbody = document.getElementById('dashboardTable');
+        tbody.insertBefore(row, tbody.firstChild);
+
+        // Update stat
+        const statEl = document.getElementById('statToday');
+        statEl.textContent = parseInt(statEl.textContent) + 1;
+
+        // Show success
+        document.getElementById('successBanner').classList.add('show');
+        setTimeout(() => {
+            document.getElementById('successBanner').classList.remove('show');
+        }, 5000);
+
+        resetForm();
+    }
+
+    function resetForm() {
+        document.getElementById('drugName').value = '';
+        document.getElementById('schedule').value = '';
+        document.getElementById('dosageForm').value = '';
+        document.getElementById('strength').value = '';
+        document.getElementById('area').value = '';
+        document.getElementById('drumNumber').value = '';
+        document.getElementById('batchNumber').value = '';
+        document.getElementById('quantity').value = '';
+        document.getElementById('reason').value = '';
+    }
+</script>
+
+</body>
+</html>
